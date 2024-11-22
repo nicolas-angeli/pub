@@ -1,0 +1,132 @@
+From 0c282dfb2961c4d2fe5228355dcd1ca499c08a17 Mon Sep 17 00:00:00 2001
+From: Gilles LASNIER <lasnierg@pc1001m.esiee.fr>
+Date: Sat, 30 Apr 2016 15:05:45 +0200
+Subject: [PATCH] drivers/misc/: add hello-5 kernel module for CIELE LAB04
+
+---
+ drivers/misc/Kconfig   |   17 ++++++++++++
+ drivers/misc/Makefile  |    1 +
+ drivers/misc/hello-5.c |   71 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 89 insertions(+)
+ create mode 100644 drivers/misc/hello-5.c
+
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 8b82c9b..053af68 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -4,6 +4,23 @@
+ 
+ menu "Misc devices"
+ 
++config HELLO_5
++	tristate "hello 5 kernel module"
++	help
++          CIELE LAB04 - Linux kernel development for Embedded System
++
++	  This is a dummy example of hello world module extracted from
++          http://www.tldp.org/LDP/lkmpg/2.6/html/x323.html.
++
++          This source code is integrated here only to show how to
++          patch a Linux kernel source tree and how to deploy kernel
++          modules on target.
++
++	  If unsure, say N.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called hello-5.
++
+ config SENSORS_LIS3LV02D
+ 	tristate
+ 	depends on INPUT
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index b668a08..5b84e7a 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -2,6 +2,7 @@
+ # Makefile for misc devices that really don't fit anywhere else.
+ #
+ 
++obj-$(CONFIG_HELLO_5)           += hello-5.o
+ obj-$(CONFIG_IBM_ASM)		+= ibmasm/
+ obj-$(CONFIG_AD525X_DPOT)	+= ad525x_dpot.o
+ obj-$(CONFIG_AD525X_DPOT_I2C)	+= ad525x_dpot-i2c.o
+diff --git a/drivers/misc/hello-5.c b/drivers/misc/hello-5.c
+new file mode 100644
+index 0000000..a624af1
+--- /dev/null
++++ b/drivers/misc/hello-5.c
+@@ -0,0 +1,71 @@
++/*
++ *  hello-5.c - Demonstrates command line argument passing to a module.
++ */
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/stat.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Peter Jay Salzman");
++
++static short int myshort = 1;
++static int myint = 420;
++static long int mylong = 9999;
++static char *mystring = "blah";
++static int myintArray[2] = { -1, -1 };
++static int arr_argc = 0;
++
++/* 
++ * module_param(foo, int, 0000)
++ * The first param is the parameters name
++ * The second param is it's data type
++ * The final argument is the permissions bits, 
++ * for exposing parameters in sysfs (if non-zero) at a later stage.
++ */
++
++module_param(myshort, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
++MODULE_PARM_DESC(myshort, "A short integer");
++module_param(myint, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
++MODULE_PARM_DESC(myint, "An integer");
++module_param(mylong, long, S_IRUSR);
++MODULE_PARM_DESC(mylong, "A long integer");
++module_param(mystring, charp, 0000);
++MODULE_PARM_DESC(mystring, "A character string");
++
++/*
++ * module_param_array(name, type, num, perm);
++ * The first param is the parameter's (in this case the array's) name
++ * The second param is the data type of the elements of the array
++ * The third argument is a pointer to the variable that will store the number 
++ * of elements of the array initialized by the user at module loading time
++ * The fourth argument is the permission bits
++ */
++module_param_array(myintArray, int, &arr_argc, 0000);
++MODULE_PARM_DESC(myintArray, "An array of integers");
++
++static int __init hello_5_init(void)
++{
++	int i;
++	printk(KERN_INFO "Hello, world 5\n=============\n");
++	printk(KERN_INFO "myshort is a short integer: %hd\n", myshort);
++	printk(KERN_INFO "myint is an integer: %d\n", myint);
++	printk(KERN_INFO "mylong is a long integer: %ld\n", mylong);
++	printk(KERN_INFO "mystring is a string: %s\n", mystring);
++	for (i = 0; i < (sizeof myintArray / sizeof (int)); i++)
++	{
++		printk(KERN_INFO "myintArray[%d] = %d\n", i, myintArray[i]);
++	}
++	printk(KERN_INFO "got %d arguments for myintArray.\n", arr_argc);
++	return 0;
++}
++
++static void __exit hello_5_exit(void)
++{
++	printk(KERN_INFO "Goodbye, world 5\n");
++}
++
++module_init(hello_5_init);
++module_exit(hello_5_exit);
++
+-- 
+1.7.10.4
+
