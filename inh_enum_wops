@@ -1,0 +1,102 @@
+use std::result::Result;
+trait IEvent: Eq {
+    fn Event() -> impl IEvent;
+    fn SimpleEvent(event: &str) -> Result<impl IEvent, String>;
+    fn DTLEvent(event: &str) -> Result<impl IEvent, String>;
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum Event {
+    EvNone = 0
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum SimpleEvent {
+    EvNone = 0,
+    EvPowerUp = 1,
+    EvTransition = 2
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum DTLEvent {
+    EvNone = 0,
+    EvPowerUp = 1,
+    EvStart = 2,
+    EvStop = 3
+}
+
+impl IEvent for Event {
+    fn Event() -> impl IEvent {
+        
+    }
+    fn SimpleEvent(event: &str) -> Result<impl IEvent, String> {
+        match event {
+            =>
+            =>
+            =>
+            =>
+            => 
+        }
+    }
+    fn DTLEvent(event: &str) -> Result<impl IEvent, String> {
+        match event {
+            =>
+            =>
+            =>
+            =>
+            => 
+        }
+    }
+}
+
+impl IEvent for SimpleEvent {
+    fn Event() -> impl IEvent {
+        
+    }
+    fn SimpleEvent(event: &str) -> Result<impl IEvent, String> {
+        match event {
+            =>
+            =>
+            =>
+            =>
+            => 
+        }
+    }
+    fn DTLEvent(event: &str) -> Result<impl IEvent, String> {
+        match event {
+            =>
+            =>
+            =>
+            =>
+            => 
+        }
+    }
+}
+
+impl IEvent for DTLEvent {
+    fn Event() -> impl IEvent {
+        
+    }
+    fn SimpleEvent(event: &str) -> Result<impl IEvent, String> {
+        match event {
+            =>
+            =>
+            =>
+            =>
+            => 
+        }
+    }
+    fn DTLEvent(event: &str) -> Result<impl IEvent, String> {
+        match event {
+            =>
+            =>
+            =>
+            =>
+            => 
+        }
+    }
+}
+
+fn main() {
+    println!("Hello, world!");
+}
